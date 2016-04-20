@@ -1,0 +1,29 @@
+name: "wordcount"
+config:
+  topology.workers: 1
+
+spouts:
+  - id: "randomsentencespout"
+    className: "tengu.storm.RandomSentenceSpout"
+    parallelism: 1
+
+bolts:
+  - id: "splitsentence"
+    className: "tengu.storm.SplitSentence"
+    parallelism: 1
+  - id: "wordcount"
+    className: "tengu.storm.WordCount"
+
+streams:
+  - name: "randomsentencespout --> splitsentence"
+    from: "randomsentencespout"
+    to: "splitsentence"
+    grouping:
+      type: SHUFFLE
+  - name: "splitsentence --> wordcount"
+    from: "splitsentence"
+    to: "wordcount"
+    grouping:
+      type: FIELDS
+      args: ["word"]
+
