@@ -13,6 +13,10 @@ bolts:
     parallelism: 1
   - id: "wordcount"
     className: "tengu.storm.WordCount"
+  - id: "test"
+    className: "tengu.storm.SplitSentence"
+  - id: "test2"
+    className: "tengu.storm.WordCount"
 
 streams:
   - name: "randomsentencespout --> splitsentence"
@@ -26,3 +30,14 @@ streams:
     grouping:
       type: FIELDS
       args: ["word"]
+  - name: "test --> test2"
+    from: "test"
+    to: "test2"
+    grouping:
+      type: FIELDS
+      args: ["word"]
+  - name: "random --> test"
+    from: "randomsentencespout"
+    to: "test"
+    grouping:
+      type: SHUFFLE
